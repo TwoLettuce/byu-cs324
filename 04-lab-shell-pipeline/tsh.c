@@ -33,7 +33,7 @@ int builtin_cmd(char **argv);
 /* Here are helper routines that we've provided for you */
 int parseline(const char *cmdline, char **argv); 
 int parseargs(char **argv, int *cmds, int *stdin_redir, int *stdout_redir);
-void child(char** argv, int* cmds, int* stdin_redir, int*stdout_redir);
+void output_redirect(char** argv, int* cmds, int* stdin_redir, int*stdout_redir, int cmdNo);
 
 void usage(void);
 void unix_error(char *msg);
@@ -107,40 +107,69 @@ void eval(char *cmdline)
 	int stdin_redir[100];
 	int stdout_redir[100];
 	char* argv[100];
-	parseline(cmdline, argv);
-	parseargs(argv, cmds, stdin_redir, stdout_redir);
+	int bg = parseline(cmdline, argv);
+	int pipelines = parseargs(argv, cmds, stdin_redir, stdout_redir);
 	builtin_cmd(argv);
+	int pipefd[2];
+	if (pipelines > 1){
+		pipe(pipefd);
+	}
+	//fprintf(stderr, "Errno before fork(): %d\n", errno);
 	int cpid = fork();
+	//fprintf(stderr, "Errno after fork(): %d\n", errno);
 	if (cpid == 0){
-		child(argv, cmds, stdin_redir, stdout_redir);
+		output_redirect(argv, cmds, stdin_redir, stdout_redir, 0);
+		if (pipelines > 1){
+			close(pipefd[0]);
+			dup2(pipefd[1], 1);
+			close(pipefd[1]);
+		}
+		//fprintf(stderr, "Errno left end of pipe before execve: %d\n", errno);
+		execve(argv[0], argv, NULL);
+		fprintf(stderr, "Error: Unrecognized command: %s\n", argv[0]);
+		exit(-1);
 	} else {
 		setpgid(cpid, cpid);
+		if (pipelines > 1) {
+			int gcpid = fork();
+			if (gcpid == 0){
+				close(pipefd[1]);
+				output_redirect(argv, cmds, stdin_redir, stdout_redir, 1);
+				dup2(pipefd[0], 0);
+				close(pipefd[0]);
+				//fprintf(stderr, "Errno right end of pipe before execve: %d\n", errno);
+				execve(argv[cmds[1]], &argv[cmds[1]], NULL);
+				fprintf(stderr, "Error: Unrecognized command: %s\n", argv[0]);
+				exit(-1);
+			} else {
+				close(pipefd[0]);
+				close(pipefd[1]);
+				setpgid(gcpid, cpid);
+			}
+		}
 	}
-	waitpid(cpid, NULL, 0);	
+	//fprintf(stderr, "Errno before waiting: %d\n", errno);
+	while (waitpid(-1, NULL, 0) != -1);
+	//fprintf(stderr, "Errno after waiting: %d\n", errno);
 	return;	
 }
 
-void child(char** argv, int* cmds, int* stdin_redir, int*stdout_redir){
+void output_redirect(char** argv, int* cmds, int* stdin_redir, int* stdout_redir, int cmdNo){
 	int fd;
-	if (stdin_redir[0] > 0){
-		fd = open(argv[stdin_redir[0]], O_RDONLY);
+	if (stdin_redir[cmdNo] > 0){
+		fd = open(argv[stdin_redir[cmdNo]], O_RDONLY);
 		dup2(fd, 0);
 		close(fd);
 	}
-	if (stdout_redir[0] > 0){
-		fd = open(argv[stdout_redir[0]], O_WRONLY | O_CREAT | O_TRUNC, 0600);
+	if (stdout_redir[cmdNo] > 0){
+		fd = open(argv[stdout_redir[cmdNo]], O_WRONLY | O_CREAT | O_TRUNC, 0600);
 		dup2(fd, 1);
 		close(fd);
 	}
-	execve(argv[0], argv, NULL);
-	fprintf(stderr, "Error: Unrecognized command: %s\n", argv[0]);
-	exit(-1);
+	//fprintf(stderr, "Errno after output redirect: %d\n", errno);
 	return;
 }	
 
-void parent(char** argv, int* cmds, int* stdin_redir, int*stdout_redir){
-	return;
-}
 /* 
  * parseargs - Parse the arguments to identify pipelined commands
  * 
