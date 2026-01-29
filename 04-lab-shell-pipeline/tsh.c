@@ -12,6 +12,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <errno.h>
+#include <fcntl.h>
 
 /* Misc manifest constants */
 #define MAXLINE    1024   /* max line size */
@@ -32,6 +33,7 @@ int builtin_cmd(char **argv);
 /* Here are helper routines that we've provided for you */
 int parseline(const char *cmdline, char **argv); 
 int parseargs(char **argv, int *cmds, int *stdin_redir, int *stdout_redir);
+void child(char** argv, int* cmds, int* stdin_redir, int*stdout_redir);
 
 void usage(void);
 void unix_error(char *msg);
@@ -101,9 +103,44 @@ int main(int argc, char **argv)
 */
 void eval(char *cmdline) 
 {
-	return;
+	int cmds[100];
+	int stdin_redir[100];
+	int stdout_redir[100];
+	char* argv[100];
+	parseline(cmdline, argv);
+	parseargs(argv, cmds, stdin_redir, stdout_redir);
+	builtin_cmd(argv);
+	int cpid = fork();
+	if (cpid == 0){
+		child(argv, cmds, stdin_redir, stdout_redir);
+	} else {
+		setpgid(cpid, cpid);
+	}
+	waitpid(cpid, NULL, 0);	
+	return;	
 }
 
+void child(char** argv, int* cmds, int* stdin_redir, int*stdout_redir){
+	int fd;
+	if (stdin_redir[0] > 0){
+		fd = open(argv[stdin_redir[0]], O_RDONLY);
+		dup2(fd, 0);
+		close(fd);
+	}
+	if (stdout_redir[0] > 0){
+		fd = open(argv[stdout_redir[0]], O_WRONLY | O_CREAT | O_TRUNC, 0600);
+		dup2(fd, 1);
+		close(fd);
+	}
+	execve(argv[0], argv, NULL);
+	fprintf(stderr, "Error: Unrecognized command: %s\n", argv[0]);
+	exit(-1);
+	return;
+}	
+
+void parent(char** argv, int* cmds, int* stdin_redir, int*stdout_redir){
+	return;
+}
 /* 
  * parseargs - Parse the arguments to identify pipelined commands
  * 
@@ -228,7 +265,11 @@ int parseline(const char *cmdline, char **argv)
  */
 int builtin_cmd(char **argv) 
 {
-	return 0;     /* not a builtin command */
+	if (strcmp(argv[0], "quit") == 0){
+		exit(0);
+	} else {
+		return 0;
+	}
 }
 
 /***********************
