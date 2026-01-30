@@ -1,7 +1,7 @@
 /* 
  * tsh - A tiny shell program with job control
  * 
- * <Put your name and login ID here>
+ * <Grant Harris - gh25216>
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -34,6 +34,7 @@ int builtin_cmd(char **argv);
 int parseline(const char *cmdline, char **argv); 
 int parseargs(char **argv, int *cmds, int *stdin_redir, int *stdout_redir);
 void output_redirect(char** argv, int* cmds, int* stdin_redir, int*stdout_redir, int cmdNo);
+void no_pipe(char** argv, int* cmds, int* stdin_redir, int* stdout_redir);
 
 void usage(void);
 void unix_error(char *msg);
@@ -107,51 +108,104 @@ void eval(char *cmdline)
 	int stdin_redir[100];
 	int stdout_redir[100];
 	char* argv[100];
-	int bg = parseline(cmdline, argv);
-	int pipelines = parseargs(argv, cmds, stdin_redir, stdout_redir);
+	parseline(cmdline, argv);
+	int pipelines = parseargs(argv, cmds, stdin_redir, stdout_redir)-1;
 	builtin_cmd(argv);
-	int pipefd[2];
-	if (pipelines > 1){
-		pipe(pipefd);
-	}
-	//fprintf(stderr, "Errno before fork(): %d\n", errno);
-	int cpid = fork();
-	//fprintf(stderr, "Errno after fork(): %d\n", errno);
-	if (cpid == 0){
-		output_redirect(argv, cmds, stdin_redir, stdout_redir, 0);
-		if (pipelines > 1){
-			close(pipefd[0]);
-			dup2(pipefd[1], 1);
-			close(pipefd[1]);
-		}
-		//fprintf(stderr, "Errno left end of pipe before execve: %d\n", errno);
-		execve(argv[0], argv, NULL);
-		fprintf(stderr, "Error: Unrecognized command: %s\n", argv[0]);
-		exit(-1);
-	} else {
-		setpgid(cpid, cpid);
-		if (pipelines > 1) {
-			int gcpid = fork();
-			if (gcpid == 0){
-				close(pipefd[1]);
-				output_redirect(argv, cmds, stdin_redir, stdout_redir, 1);
-				dup2(pipefd[0], 0);
-				close(pipefd[0]);
-				//fprintf(stderr, "Errno right end of pipe before execve: %d\n", errno);
-				execve(argv[cmds[1]], &argv[cmds[1]], NULL);
-				fprintf(stderr, "Error: Unrecognized command: %s\n", argv[0]);
-				exit(-1);
+	int pipefd[2] = {-1,-1};
+	int pipe2fd[2];
+	int cpids[100];
+	if (pipelines > 0){
+		pipe(pipe2fd);
+		for (int i = 0; i < pipelines+1; i++){
+			cpids[i] = fork();
+			if (cpids[i] == 0){
+				if (i == 0 || i == pipelines){
+					output_redirect(argv, cmds, stdin_redir, stdout_redir, i);
+					if (i==0){
+						close(pipe2fd[0]);
+						dup2(pipe2fd[1], 1);
+						close(pipe2fd[1]);
+						execve(argv[0], argv, NULL);
+						fprintf(stderr, "Error: Unrecognized command: %s\n", argv[i]);
+						exit(-1);
+					} else {
+						close(pipe2fd[1]);
+						dup2(pipefd[0], 0);
+						close(pipe2fd[0]);
+						close(pipefd[0]);
+						close(pipefd[1]);
+						execve(argv[cmds[i]], &argv[cmds[i]], NULL);
+						fprintf(stderr, "Error: Unrecognized command: %s\n", argv[i]);
+						exit(-1);
+					}
+				} else {
+					close(pipefd[1]);
+					dup2(pipefd[0], 0);
+					close(pipefd[0]);
+					close(pipe2fd[0]);
+					dup2(pipe2fd[1], 1);
+					close(pipe2fd[1]);
+					execve(argv[cmds[i]], &argv[cmds[i]], NULL);
+					fprintf(stderr, "Error: Unrecognized command: %s\n", argv[i]);
+					exit(-1);
+				}
 			} else {
+				setpgid(cpids[0], cpids[i]);
 				close(pipefd[0]);
 				close(pipefd[1]);
-				setpgid(gcpid, cpid);
+				pipefd[0] = pipe2fd[0];
+				pipefd[1] = pipe2fd[1];
+				pipe(pipe2fd);
 			}
 		}
+		close(pipe2fd[0]);
+		close(pipe2fd[1]);
+		while (waitpid(-1, NULL, 0) != -1);
+		return;
+	} else {
+		if (fork()==0){
+			no_pipe(argv, cmds, stdin_redir, stdout_redir);
+		} else {
+			while (waitpid(-1, NULL, 0) != -1);
+			return;
+		}
 	}
-	//fprintf(stderr, "Errno before waiting: %d\n", errno);
-	while (waitpid(-1, NULL, 0) != -1);
-	//fprintf(stderr, "Errno after waiting: %d\n", errno);
-	return;	
+//	int cpid = fork();
+//	if (cpid == 0){
+//		output_redirect(argv, cmds, stdin_redir, stdout_redir, 0);
+//		if (pipelines > 0){
+//			close(pipefd[0]);
+//			dup2(pipefd[1], 1);
+//			close(pipefd[1]);
+//		}
+//		//fprintf(stderr, "Errno left end of pipe before execve: %d\n", errno);
+//		execve(argv[0], argv, NULL);
+//		fprintf(stderr, "Error: Unrecognized command: %s\n", argv[0]);
+//		exit(-1);
+//	} else {
+//		setpgid(cpid, cpid);
+//		if (pipelines > 0) {
+//			int gcpid = fork();
+//			if (gcpid == 0){
+//				close(pipefd[1]);
+//				output_redirect(argv, cmds, stdin_redir, stdout_redir, 1);
+//				dup2(pipefd[0], 0);
+//				close(pipefd[0]);
+//				//fprintf(stderr, "Errno right end of pipe before execve: %d\n", errno);
+//				execve(argv[cmds[1]], &argv[cmds[1]], NULL);
+//				fprintf(stderr, "Error: Unrecognized command: %s\n", argv[0]);
+//				exit(-1);
+//			} else {
+//				close(pipefd[0]);
+//				close(pipefd[1]);
+//				setpgid(gcpid, cpid);
+//			}
+//		}
+//	}
+//	//fprintf(stderr, "Errno before waiting: %d\n", errno);
+//	while (waitpid(-1, NULL, 0) != -1);
+//	//fprintf(stderr, "Errno after waiting: %d\n", errno);
+//	return;	
 }
 
 void output_redirect(char** argv, int* cmds, int* stdin_redir, int* stdout_redir, int cmdNo){
@@ -170,6 +224,14 @@ void output_redirect(char** argv, int* cmds, int* stdin_redir, int* stdout_redir
 	return;
 }	
 
+void no_pipe(char** argv, int* cmds, int* stdin_redir, int* stdout_redir){
+	output_redirect(argv, cmds, stdin_redir, stdout_redir, 0);
+	execve(argv[0], argv, NULL);
+        fprintf(stderr, "Error: Unrecognized command: %s\n", argv[0]);
+	exit(-1);
+
+
+}
 /* 
  * parseargs - Parse the arguments to identify pipelined commands
  * 
@@ -334,4 +396,5 @@ void app_error(char *msg)
 	fprintf(stdout, "%s\n", msg);
 	exit(1);
 }
+
 
