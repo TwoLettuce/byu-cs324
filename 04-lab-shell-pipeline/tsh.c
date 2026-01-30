@@ -150,7 +150,7 @@ void eval(char *cmdline)
 					exit(-1);
 				}
 			} else {
-				setpgid(cpids[0], cpids[i]);
+				setpgid(cpids[i], cpids[0]);
 				close(pipefd[0]);
 				close(pipefd[1]);
 				pipefd[0] = pipe2fd[0];
