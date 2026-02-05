@@ -28,6 +28,7 @@ int main(int argc, char *argv[]) {
 
 	switch (scenario[0]) {
 	case '0':
+		kill(pid, SIGINT);
 		break;
 	case '1':
 		break;
