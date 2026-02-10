@@ -1,7 +1,7 @@
 /* 
  * tsh - A tiny shell program with job control
  * 
- * <Put your name and login ID here>
+ * <Grant Harris - gh25216>
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -165,6 +165,7 @@ int main(int argc, char **argv)
 */
 void eval(char *cmdline) 
 {
+	
 	return;
 }
 
@@ -231,7 +232,20 @@ int parseline(const char *cmdline, char **argv)
  */
 int builtin_cmd(char **argv) 
 {
-	return 0;     /* not a builtin command */
+	switch (argv[1]){
+		case "quit":
+			exit(0);
+			break;
+		case "fg", "bg":
+			do_bgfg(argv);
+			break;
+		case "jobs":
+			listjobs();
+			break;
+		case "default":
+			return 0;
+	}
+	return 1;
 }
 
 /* 
