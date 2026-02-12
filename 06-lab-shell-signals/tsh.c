@@ -349,6 +349,13 @@ void sigchld_handler(int sig)
  */
 void sigint_handler(int sig) 
 {
+	if (verbose)
+		printf("Entering sigint_handler\n");
+	
+	pid_t pid = fgpid(jobs);
+	pid_t gpid = getpgid(pid);
+	kill(-1*gpid, sig);
+	
 	return;
 }
 
@@ -359,6 +366,13 @@ void sigint_handler(int sig)
  */
 void sigtstp_handler(int sig) 
 {
+	if (verbose)
+		printf("Entering sigstp_handler\n");
+	
+	pid_t pid = fgpid(jobs);
+	pid_t gpid = getpgid(pid);
+	kill(-1*gpid, sig);
+	
 	return;
 }
 
