@@ -165,7 +165,43 @@ int main(int argc, char **argv)
 */
 void eval(char *cmdline) 
 {
+	char* argv[MAXLINE];
+	char is_bg = parseline(cmdline, argv);
+	int state;
+	if (is_bg){
+		state = BG;
+	} else {
+		state = FG;
+	}
+	if (verbose)
+		printf("%s\n", argv[0]);
+	if (builtin_cmd(argv))
+		return;
 	
+	sigset_t block_set;
+	sigset_t old_set;
+	sigemptyset(&block_set);
+	sigaddset(&block_set, SIGINT | SIGCHLD | SIGTSTP);
+	sigprocmask(SIG_BLOCK, &block_set, &old_set);
+	pid_t pid = fork();
+	if (pid == 0){
+		sigprocmask(SIG_SETMASK, &old_set, NULL);
+		execve(argv[0], argv, NULL);
+
+		printf("%s: Command not found\n", argv[0]);
+		exit(-1);
+	} else {
+		sigemptyset(&old_set);
+		setpgid(pid, pid);
+		addjob(jobs, pid, state, cmdline);
+		sigprocmask(SIG_SETMASK, &old_set, NULL);
+		if (is_bg){
+			printf("[%d] (%d) %s\n", pid2jid(pid), pid, cmdline);
+		} else {
+			waitfg(pid);
+		}
+	}
+
 	return;
 }
 
@@ -232,20 +268,25 @@ int parseline(const char *cmdline, char **argv)
  */
 int builtin_cmd(char **argv) 
 {
-	switch (argv[1]){
-		case "quit":
-			exit(0);
-			break;
-		case "fg", "bg":
-			do_bgfg(argv);
-			break;
-		case "jobs":
-			listjobs();
-			break;
-		case "default":
-			return 0;
+	char* cmd = argv[0];
+	if (strcmp(cmd,"quit") == 0){
+		if (verbose) 
+			printf("see ya!");
+		exit(0);
 	}
-	return 1;
+	if (strcmp(cmd,"fg") == 0 || strcmp(cmd,"bg") == 0){
+		if (verbose)
+			printf("doing bg/fg");
+		do_bgfg(argv);
+		return 1;
+	}
+	if (strcmp(cmd,"jobs") == 0){
+		if (verbose)
+			printf("printing jobs\n");
+		listjobs(jobs);
+		return 1;
+	}
+	return 0;
 }
 
 /* 
@@ -261,6 +302,11 @@ void do_bgfg(char **argv)
  */
 void waitfg(pid_t pid)
 {
+	struct job_t* job = getjobpid(jobs, pid);
+	while (job->state == FG){
+		job = getjobpid(jobs, pid);
+		sleep(1);
+	}
 	return;
 }
 
@@ -277,6 +323,22 @@ void waitfg(pid_t pid)
  */
 void sigchld_handler(int sig) 
 {
+	if (verbose)
+		printf("sigchld_handler: entering\n");
+	int exit_status;
+	pid_t pid;
+	while ((pid = waitpid(-1, &exit_status, WNOHANG | WUNTRACED)) > 0){
+		if (WIFSTOPPED(exit_status)){
+			struct job_t* job = getjobpid(jobs, pid);
+			job->state = ST;	
+			printf("Job [%d] (%d) stopped by signal %d\n", pid2jid(pid), pid, WSTOPSIG(exit_status));
+		} else if (WIFSIGNALED(exit_status)){
+			printf("Job [%d] (%d) terminated by signal %d\n", pid2jid(pid), pid, WTERMSIG(exit_status));
+			deletejob(jobs, pid);
+		} else if (WIFEXITED(exit_status)){
+		deletejob(jobs, pid);
+		}
+	}	
 	return;
 }
 
