@@ -196,7 +196,7 @@ void eval(char *cmdline)
 		addjob(jobs, pid, state, cmdline);
 		sigprocmask(SIG_SETMASK, &old_set, NULL);
 		if (is_bg){
-			printf("[%d] (%d) %s\n", pid2jid(pid), pid, cmdline);
+			printf("[%d] (%d) %s", pid2jid(pid), pid, cmdline);
 		} else {
 			waitfg(pid);
 		}
@@ -276,7 +276,7 @@ int builtin_cmd(char **argv)
 	}
 	if (strcmp(cmd,"fg") == 0 || strcmp(cmd,"bg") == 0){
 		if (verbose)
-			printf("doing bg/fg");
+			printf("doing bg/fg\n");
 		do_bgfg(argv);
 		return 1;
 	}
@@ -289,11 +289,70 @@ int builtin_cmd(char **argv)
 	return 0;
 }
 
+
 /* 
  * do_bgfg - Execute the builtin bg and fg commands
  */
 void do_bgfg(char **argv) 
 {
+	char is_jid = 0;
+	char jid = 0;
+	char* jo = "%jobid";
+	if (verbose)
+		printf("argv[1]: %s\n", argv[1]);
+	if (argv[1] == NULL){
+		printf("%s command requires PID or %s argument\n", argv[0], jo);
+		return;
+	}
+	for (int i = 0; argv[1][i] != '\0'; i++){
+		if (!isdigit(argv[1][i]) && argv[1][i] != '%'){
+			printf("%s: argument must be a PID or %s\n", argv[0], jo);
+			return;
+		}
+	}
+	if (argv[1][0] == '%'){
+		is_jid=1;
+	}
+	struct job_t * job;
+
+	if (is_jid){
+		char* jid_ptr = argv[1] + 1;
+		jid = strtol(jid_ptr, NULL, 10);
+		if (verbose) 
+			printf("jid: %d\n", jid);
+					
+		job = getjobjid(jobs, jid);
+		if (job == NULL) {
+			printf("%s: No such job\n", argv[1]);
+			return;
+		}
+	} else {
+		job = getjobpid(jobs, strtol(argv[1], NULL, 10));
+		if (job == NULL){
+			printf("(%s): No such process\n", argv[1]);
+			return;
+		}
+	}
+
+	if (strcmp(argv[0], "bg")== 0){
+		job->state = BG;
+		if (verbose) 
+			printf("job [%d] (%d) set to BG\n", job->jid, job->pid);
+		pid_t pgid = getpgid(job->pid);
+		kill(-1*pgid, SIGCONT);
+		printf("[%d] (%d) %s", job->jid, job->pid, job->cmdline);
+	} else if (strcmp(argv[0], "fg")== 0) {
+		job->state = FG;
+		if (verbose) 
+			printf("job [%d] (%d) set to FG\n", job->jid, job->pid);
+		pid_t pgid = getpgid(job->pid);
+		kill(-1*pgid, SIGCONT);
+		waitfg(job->pid);
+	} else {
+		fprintf(stderr, "invalid ground: %s\n", argv[0]);
+		return;
+	}
+	
 	return;
 }
 
@@ -353,8 +412,10 @@ void sigint_handler(int sig)
 		printf("Entering sigint_handler\n");
 	
 	pid_t pid = fgpid(jobs);
-	pid_t gpid = getpgid(pid);
-	kill(-1*gpid, sig);
+	if (pid != 0){
+		pid_t gpid = getpgid(pid);
+		kill(-1*gpid, sig);
+	}
 	
 	return;
 }
@@ -370,9 +431,10 @@ void sigtstp_handler(int sig)
 		printf("Entering sigstp_handler\n");
 	
 	pid_t pid = fgpid(jobs);
-	pid_t gpid = getpgid(pid);
-	kill(-1*gpid, sig);
-	
+	if (pid != 0){
+		pid_t gpid = getpgid(pid);
+		kill(-1*gpid, sig);
+	}
 	return;
 }
 
