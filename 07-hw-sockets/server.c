@@ -94,6 +94,8 @@ int main(int argc, char *argv[]) {
 		socklen_t addr_len = sizeof(struct sockaddr_storage);
 		ssize_t nread = recvfrom(sfd, buf, BUF_SIZE, 0,
 				remote_addr, &addr_len);
+		sleep(5);
+
 		if (nread < 0) {
 			perror("receiving message");
 			exit(EXIT_FAILURE);
