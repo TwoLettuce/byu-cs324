@@ -1,0 +1,45 @@
+sig_handler1: prints 1, sleeps 4 seconds, then prints 2
+call using SIGHUP/SIGINT
+output:
+1
+2
+
+sig_handler2: prints 8, sends SIGINT to itself, sleeps 4 seconds, then prints
+9.
+call using SIGQUIT
+Ouptut:
+8
+sighandler1(2);
+9
+
+sig_handler3: prints the values of global variable "foo"
+call using SIGTERM
+Output:
+%d, foo
+
+sig_handler4: if foo is > 0, set foo to 6
+call using signal 30
+Ouptut: none
+
+sig_handler5: fork a child, store that cpid in foo. exit the child process.
+call using signal 10
+Output: none
+
+sig_handler6: If there is a child is still running, exit with code 7. If there were no child processes to wait on, print the errno.
+call using signal 16
+Output:
+%d, errno IF waitpid(-1, &status, WNOHANG); RETURNS -1
+
+sig_handler7: if block is set is nonzero, zero it. otherwise, set it to one. if block is 1, SIGINT and SIGCHLD are blocked. if block is 0, they are
+unblocked.
+call using signal 31
+output: none
+
+sig_handler8: restores the default signal handler for SIGTERM. 
+call using signal 12
+output: none
+
+sig_handler9: get the exit status of the child and prints it.
+call using SIGCHLD
+output:
+%d, exit status

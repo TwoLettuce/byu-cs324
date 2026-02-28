@@ -1,0 +1,1 @@
+./sdriver.pl -t trace40.txt -s ./tsh -a "-p"
