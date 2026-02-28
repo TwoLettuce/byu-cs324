@@ -37,7 +37,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	unsigned short port = atoi(argv[portindex]);
-	int sock_type = SOCK_DGRAM;
+	int sock_type = SOCK_STREAM;
 
 
 	/* SECTION A - populate address structures */
@@ -74,13 +74,20 @@ int main(int argc, char *argv[]) {
 	/* SECTION C - interact with clients; receive and send messages */
 
 	// Read datagrams and echo them back to sender
-	while (1) {
+	listen(sfd, 100);
+	while (1){
+	    // Remote address information is stored in remote_addr_ss.  See notes
+            // above for local_addr_ss and local_addr_ss.
+	    struct sockaddr_storage remote_addr_ss;
+	    struct sockaddr *remote_addr = (struct sockaddr *)&remote_addr_ss;
+
+	    socklen_t addr_len = sizeof(struct sockaddr_storage);
+	    int cfd = accept(sfd, remote_addr, &addr_len);
+	    sleep(5);
+
+	    while (1) {
 		char buf[BUF_SIZE];
 
-		// Remote address information is stored in remote_addr_ss.  See notes
-		// above for local_addr_ss and local_addr_ss.
-		struct sockaddr_storage remote_addr_ss;
-		struct sockaddr *remote_addr = (struct sockaddr *)&remote_addr_ss;
 		char remote_ip[INET6_ADDRSTRLEN];
 		unsigned short remote_port;
 
@@ -92,13 +99,16 @@ int main(int argc, char *argv[]) {
 		// NOTE: addr_len needs to be initialized before every call to
 		// recvfrom().  See the man page for recvfrom().
 		socklen_t addr_len = sizeof(struct sockaddr_storage);
-		ssize_t nread = recvfrom(sfd, buf, BUF_SIZE, 0,
-				remote_addr, &addr_len);
-		sleep(5);
+		ssize_t nread = recv(cfd, buf, BUF_SIZE, 0);
+		
+		// sleep(5);
 
 		if (nread < 0) {
 			perror("receiving message");
 			exit(EXIT_FAILURE);
+		} else if (nread == 0){
+			close(cfd);
+			break;
 		}
 
 		// Extract the IP address and port from the struct referred to
@@ -111,8 +121,9 @@ int main(int argc, char *argv[]) {
 				nread, remote_ip, remote_port);
 
 		// Return bytes to remote socket using sendto().
-		if (sendto(sfd, buf, nread, 0, remote_addr, addr_len) < 0) {
+		if (send(cfd, buf, nread, 0) < 0) {
 			perror("sending response");
 		}
+	    }
 	}
 }

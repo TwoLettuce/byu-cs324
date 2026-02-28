@@ -52,7 +52,7 @@ int main(int argc, char *argv[]) {
 	// in on the command line.
 	hints.ai_family = af;
 	// Use type SOCK_DGRAM (UDP)
-	hints.ai_socktype = SOCK_DGRAM;
+	hints.ai_socktype = SOCK_STREAM;
 
 
 	struct addrinfo *result;
@@ -130,7 +130,7 @@ int main(int argc, char *argv[]) {
 
 		// If connect() succeeds, then break out of the loop; we will
 		// use the current address as our remote address.
-		// if (connect(sfd, remote_addr, addr_len) >= 0)
+		if (connect(sfd, remote_addr, addr_len) >= 0)
 			break;
 
 		close(sfd);
@@ -167,42 +167,87 @@ int main(int argc, char *argv[]) {
 
 
 	/* SECTION C - interact with server; send, receive, print messages */
+	
+	unsigned char buf[4096];
+	int i = 0;
+	int totalBytesRead = 0;
+	while (totalBytesRead + 50 < 4096) {
+		int nread = read(STDIN_FILENO, buf + totalBytesRead, 50);
+		totalBytesRead += nread;
+		i++;
+		if (nread == 0){
+			break;
+		}
+	}
+	fprintf(stderr, "bytes read: %d\n", totalBytesRead);
+
+
+	int totalBytesSent = 0;
+	while (totalBytesSent < totalBytesRead) {
+		int nsent = send(sfd, buf+totalBytesSent, 10, 0);
+		totalBytesSent += nsent;
+		if (nsent == 0){
+			break;
+		}
+	}
+	fprintf(stderr, "bytes sent: %d\n", totalBytesSent);
+
+	unsigned char recvbuf[16384];
+	int totalBytesReceived = 0;
+	while (totalBytesReceived < 16834){
+		int this_recv;
+		if (totalBytesReceived + 512 > 16834){
+			this_recv = 16834-totalBytesReceived;
+		} else {
+			this_recv = 512;
+		}
+		int nread = recv(sfd, recvbuf + totalBytesReceived, this_recv, 0);
+		totalBytesReceived += nread;
+		
+		fprintf(stderr, "%d bytes read this iteration\n", nread);
+
+		if (nread == 0){
+			break;
+		}
+	}
+	
+	fprintf(stderr, "bytes received: %d\n", totalBytesReceived);
+
+	write(STDOUT_FILENO, recvbuf, totalBytesReceived);
 
 	// Send remaining command-line arguments as separate
 	// datagrams, and read responses from server.
-	for (int j = hostindex + 2; j < argc; j++) {
-		// buf will hold the bytes we read from the socket.
-		char buf[BUF_SIZE];
-
-		size_t len = strlen(argv[j]);
-
-		// Check for buffer overflow.
-		if (len > BUF_SIZE) {
-			fprintf(stderr,"Ignoring long message in argument %d\n", j);
-			continue;
-		}
-
-		// Send bytes to remote socket using send().
-		// ssize_t nwritten = send(sfd, argv[j], len, 0);
-		ssize_t nwritten = sendto(sfd, argv[j], len, 0, remote_addr, addr_len);
-
-
-		if (nwritten < 0) {
-			perror("send");
-			exit(EXIT_FAILURE);
-		}
-		printf("Sent %zd bytes: %s\n", len, argv[j]);
-
-		// Read bytes from remote socket using recv().
-		// ssize_t nread = recv(sfd, buf, BUF_SIZE, 0);
-		//buf[nread] = '\0';
-		//if (nread < 0) {
-		//	perror("read");
-		//	exit(EXIT_FAILURE);
-		//}
-		// printf("Received %zd bytes: %s\n", nread, buf);
-
-	}
+	// for (int j = hostindex + 2; j < argc; j++) {
+	//	// buf will hold the bytes we read from the socket.
+	//	char buf[BUF_SIZE];
+//
+//		size_t len = strlen(argv[j]);
+//
+//		// Check for buffer overflow.
+//		if (len > BUF_SIZE) {
+//			fprintf(stderr,"Ignoring long message in argument %d\n", j);
+//			continue;
+//		}
+//
+//		// Send bytes to remote socket using send().
+//		ssize_t nwritten = send(sfd, argv[j], len, 0);
+//
+//		if (nwritten < 0) {
+//			perror("send");
+//			exit(EXIT_FAILURE);
+//		}
+//		printf("Sent %zd bytes: %s\n", len, argv[j]);
+//
+//		// Read bytes from remote socket using recv().
+//		// ssize_t nread = recv(sfd, buf, BUF_SIZE, 0);
+//		// buf[nread] = '\0';
+//		// if (nread < 0) {
+//		//	perror("read");
+//		//	exit(EXIT_FAILURE);
+//		// }
+//		// printf("Received %zd bytes: %s\n", nread, buf);
+//
+//	}
 
 	exit(EXIT_SUCCESS);
 }
