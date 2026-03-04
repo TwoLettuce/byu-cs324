@@ -3,6 +3,9 @@
 #define USERID 1916400641
 
 #include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <arpa/inet.h>
 
 #include "sockhelper.h"
 
@@ -14,7 +17,26 @@ int main(int argc, char *argv[]) {
 	for (int i = 0; i < argc; i++){
 		printf("argv[%d] = %s\n", i, argv[i]);
 	}
+
+	char zero_byte = 0x0;
+	char level = atoi(argv[3]);
+	unsigned int userID = htonl(USERID);
+	unsigned short seed = htons(atoi(argv[4]));
+	unsigned char request[8];
+	printf("zero_byte = %d\n", zero_byte);
+	printf("USERID = %08x\n", USERID);
+	printf("level = %02x\n", level);
+	// printf("\nExample: %08x\n", 123456789);
+	printf("seed = %04x\n", atoi(argv[4]));
+
+	bzero(request, 8);
+	memcpy(&request[0], &zero_byte, sizeof(char));
+	memcpy(&request[1], &level, sizeof(char));
+	memcpy(&request[2], &userID, sizeof(unsigned int));
+	memcpy(&request[6], &seed, sizeof(unsigned short));
+	print_bytes(request, 8);
 }
+
 
 void print_bytes(unsigned char *bytes, int byteslen) {
 	int i, j, byteslen_adjusted;
