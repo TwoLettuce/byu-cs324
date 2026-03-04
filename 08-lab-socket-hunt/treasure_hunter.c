@@ -112,6 +112,9 @@ int main(int argc, char *argv[]) {
 		unsigned char chunk_len = buf[0];
 		if (chunk_len == 0){
 			break;
+		} else if (chunk_len > 127){
+			printf("Error code: %d\n", chunk_len);
+			exit(-1);
 		}
 
 		unsigned char chunk[128];
@@ -148,14 +151,7 @@ int main(int argc, char *argv[]) {
 			printf("nonce response host = %08x\n", nonce);
 		}
 
-		nonce_nw = htonl(nonce);
-		unsigned char nonce_str[4];
-		memcpy(&nonce_str, &nonce_nw, sizeof(unsigned int));
-		if (verbose) {
-			printf("nonce sent: %08x\n", nonce_nw);
-			print_bytes(nonce_str, 4);
-			printf("\nTreasure: %s\n", treasure);
-		}
+		
 
 		if (op_code == 1){
 			unsigned short new_remote_port = op_param;
@@ -168,8 +164,36 @@ int main(int argc, char *argv[]) {
 			if (bind(sock, local_addr, sizeof(struct sockaddr_storage)) < 0) {
 				perror("bind()");
 			}
+		} else if (op_code == 3){
+			bzero(buf, 256);
+			unsigned short m = op_param;
+			unsigned int new_nonce = 0;
+			for (int i = 0; i < m; i++){
+				struct sockaddr_storage socket_addr_ss;
+				struct sockaddr* socket_addr = (struct sockaddr*) &socket_addr_ss;
+				char socket_ip[INET6_ADDRSTRLEN];
+				unsigned int sockaddr_len = INET6_ADDRSTRLEN;
+				unsigned short socket_port;
+				recvfrom(sock, buf, 0, 0, socket_addr, &sockaddr_len);
+				parse_sockaddr(socket_addr, socket_ip, &socket_port);
+				new_nonce += socket_port;
+				if(verbose){
+					printf("m: %d\ni: %d\nnew_nonce: %d\n", m, i, new_nonce);
+					printf("Port received from: %d\n", socket_port);
+				}
+			}
+			nonce = new_nonce+1;
+	
 		}
 
+		nonce_nw = htonl(nonce);
+		unsigned char nonce_str[4];
+		memcpy(&nonce_str, &nonce_nw, sizeof(unsigned int));
+		if (verbose) {
+			printf("nonce sent: %08x\n", nonce_nw);
+			print_bytes(nonce_str, 4);
+			printf("\nTreasure: %s\n", treasure);
+		}
 		nsent = sendto(sock, nonce_str, 4, 0, remote_addr, addr_len);
 	}
 	treasure[treasure_len] = '\0';
