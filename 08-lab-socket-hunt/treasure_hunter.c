@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include <sys/types.h>
@@ -17,8 +18,13 @@ int verbose = 0;
 void print_bytes(unsigned char *bytes, int byteslen);
 
 int main(int argc, char *argv[]) {
-	for (int i = 0; i < argc; i++){
-		printf("argv[%d] = %s\n", i, argv[i]);
+	if (strcmp(argv[argc-1], "-v") == 0)
+		verbose = 1;
+
+	if (verbose){
+		for (int i = 0; i < argc; i++){
+			printf("argv[%d] = %s\n", i, argv[i]);
+		}
 	}
 
 	char zero_byte = 0x0;
@@ -26,17 +32,19 @@ int main(int argc, char *argv[]) {
 	unsigned int userID = htonl(USERID);
 	unsigned short seed = htons(atoi(argv[4]));
 	unsigned char request[8];
-	printf("zero_byte = %d\n", zero_byte);
-	printf("USERID = %08x\n", USERID);
-	printf("level = %02x\n", level);
-	printf("seed = %04x\n", atoi(argv[4]));
-
+	
 	bzero(request, 8);
 	memcpy(&request[0], &zero_byte, sizeof(char));
 	memcpy(&request[1], &level, sizeof(char));
 	memcpy(&request[2], &userID, sizeof(unsigned int));
 	memcpy(&request[6], &seed, sizeof(unsigned short));
-	print_bytes(request, 8);
+	if (verbose){
+		printf("zero_byte = %d\n", zero_byte);
+		printf("USERID = %08x\n", USERID);
+		printf("level = %02x\n", level);
+		printf("seed = %04x\n", atoi(argv[4]));
+		print_bytes(request, 8);
+	}
 
 
 	int sock = socket(AF_INET, SOCK_DGRAM, 0);
@@ -76,59 +84,96 @@ int main(int argc, char *argv[]) {
 	socklen_t addr_len = sizeof(struct sockaddr_storage);
 	getsockname(sock, local_addr, &addr_len);
 	parse_sockaddr(local_addr, local_ip, &local_port);
-	
-	printf("sending bytes\n");
+	if (verbose)
+		printf("sending bytes\n");
 
 	ssize_t nsent = sendto(sock, request, 8, 0, remote_addr, addr_len);
 
 	unsigned char buf[256];
-	printf("receiving bytes\n");
-	ssize_t nreceived = recvfrom(sock, buf, 256, 0, remote_addr, &addr_len);
-	
-	printf("Sent %ld bytes. Received %ld bytes.\n", nsent, nreceived);
-	print_bytes(buf, nreceived);
+	unsigned char treasure[1024];
+	unsigned short treasure_len = 0;
+	int addr_fam = AF_INET;
 
-	unsigned char chunk_len = buf[0];
-	printf("chunk length: %d\n", chunk_len);
-	
-	unsigned char chunk[128];
-	memcpy(chunk, &buf[1], chunk_len * sizeof(unsigned char));
-	chunk[127] = '\0';
-	printf("chunk:\n%s\n", chunk);
 
-	unsigned char op_code = buf[chunk_len+1];
-	printf("Op Code: %d\n", op_code);
+	while (1) {	
+		bzero(buf, 256);
+		
+		if (verbose){
+			printf("receiving bytes\n");
+		}
 
-	unsigned short op_param_nw;
-	memcpy(&op_param_nw, &buf[chunk_len+2], sizeof(unsigned short));
-	unsigned short op_param = ntohs(op_param_nw);
-	printf("Op Param: %d\n", op_param);
-	
-	
-	unsigned int nonce_nw;
-	memcpy(&nonce_nw, &buf[chunk_len+4], sizeof(unsigned int));
-	printf("nonce received: %08x\n", nonce_nw);
-	unsigned int nonce = ntohl(nonce_nw);
+		ssize_t nreceived = recvfrom(sock, buf, 256, 0, remote_addr, &addr_len);
 
-	printf("nonce host = %08x\n", nonce);
-	nonce++;
-	printf("nonce response host = %08x\n", nonce);
+		if (verbose) {
+			printf("Sent %ld bytes. Received %ld bytes.\n", nsent, nreceived);
+			print_bytes(buf, nreceived);
+		}
 
-	nonce_nw = htonl(nonce);
-	unsigned char nonce_str[4];
-	memcpy(&nonce_str, &nonce_nw, sizeof(unsigned int));
+		unsigned char chunk_len = buf[0];
+		if (chunk_len == 0){
+			break;
+		}
 
-	printf("nonce sent: %08x\n", nonce_nw);
-	print_bytes(nonce_str, 4);
+		unsigned char chunk[128];
+		memcpy(chunk, &buf[1], chunk_len * sizeof(unsigned char));
+		chunk[chunk_len] = '\0';
 
-	nsent = sendto(sock, nonce_str, 4, 0, remote_addr, addr_len);
+		unsigned char op_code = buf[chunk_len+1];
 
-	bzero(buf, 256);
-	nreceived = recvfrom(sock, buf, 256, 0, remote_addr, &addr_len);
+		unsigned short op_param_nw;
+		memcpy(&op_param_nw, &buf[chunk_len+2], sizeof(unsigned short));
+		unsigned short op_param = ntohs(op_param_nw);
 
-	printf("Sent %ld bytes. Received %ld bytes.\n", nsent, nreceived);
-	print_bytes(buf, nreceived);
+		if(verbose) {
+			printf("chunk length: %d\n", chunk_len);
+			printf("chunk:\n%s\n", chunk);
+			printf("Op Code: %d\n", op_code);
+			printf("Op Param: %d\n", op_param);
+		}
 
+		memcpy(&treasure[treasure_len], chunk, chunk_len * sizeof(unsigned char));
+		treasure_len += chunk_len;
+
+		unsigned int nonce_nw;
+		memcpy(&nonce_nw, &buf[chunk_len+4], sizeof(unsigned int));
+
+		if(verbose)
+			printf("nonce received: %08x\n", nonce_nw);
+
+		unsigned int nonce = ntohl(nonce_nw);
+
+		nonce++;
+		if (verbose){
+			printf("nonce host = %08x\n", nonce);
+			printf("nonce response host = %08x\n", nonce);
+		}
+
+		nonce_nw = htonl(nonce);
+		unsigned char nonce_str[4];
+		memcpy(&nonce_str, &nonce_nw, sizeof(unsigned int));
+		if (verbose) {
+			printf("nonce sent: %08x\n", nonce_nw);
+			print_bytes(nonce_str, 4);
+			printf("\nTreasure: %s\n", treasure);
+		}
+
+		if (op_code == 1){
+			unsigned short new_remote_port = op_param;
+			populate_sockaddr(remote_addr, addr_fam, remote_ip, new_remote_port); 
+		} else if (op_code == 2){
+			close(sock);
+			sock = socket(AF_INET, SOCK_DGRAM, 0);
+			unsigned short new_local_port = op_param;
+			populate_sockaddr(local_addr, addr_fam, NULL, new_local_port);
+			if (bind(sock, local_addr, sizeof(struct sockaddr_storage)) < 0) {
+				perror("bind()");
+			}
+		}
+
+		nsent = sendto(sock, nonce_str, 4, 0, remote_addr, addr_len);
+	}
+	treasure[treasure_len] = '\0';
+	printf("%s\n", treasure);
 
 }
 
