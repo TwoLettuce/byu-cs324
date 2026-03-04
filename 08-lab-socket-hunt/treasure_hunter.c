@@ -6,6 +6,9 @@
 #include <string.h>
 #include <stdlib.h>
 #include <arpa/inet.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <netdb.h>
 
 #include "sockhelper.h"
 
@@ -35,6 +38,63 @@ int main(int argc, char *argv[]) {
 	memcpy(&request[2], &userID, sizeof(unsigned int));
 	memcpy(&request[6], &seed, sizeof(unsigned short));
 	print_bytes(request, 8);
+	
+
+
+	int sock = socket(AF_INET, SOCK_DGRAM, 0);
+	printf("sfd: %d\n", sock);
+	
+	printf("hints setup\n");
+
+	struct addrinfo hints;
+	// Initialize everything to 0
+	memset(&hints, 0, sizeof(struct addrinfo));
+	// Set the address family to either AF_INET (get only IPv4 address
+	// information), AF_INET6 (get only IPv6 information), or AF_UNSPEC
+	// (get both IPv4 and IPv6 information), depending on what was passed
+	// in on the command line.
+	hints.ai_family = AF_INET;
+	// Use type SOCK_DGRAM (UDP)
+	hints.ai_socktype = SOCK_DGRAM;
+
+	struct addrinfo *result;
+
+	printf("remote addr and port setup\n");
+
+	char port[8];
+	sprintf(port, argv[2]);
+	getaddrinfo(argv[1], port, &hints, &result);
+
+	struct sockaddr_storage remote_addr_ss;
+	struct sockaddr* remote_addr = (struct sockaddr*) &remote_addr_ss;
+
+	memcpy(remote_addr, result->ai_addr, sizeof(struct sockaddr_storage));
+
+	char remote_ip[INET6_ADDRSTRLEN];
+	unsigned short remote_port;
+	parse_sockaddr(remote_addr, remote_ip, &remote_port);
+
+	printf("local addr and port setup\n");
+
+	struct sockaddr_storage local_addr_ss;
+	struct sockaddr* local_addr = (struct sockaddr*) &local_addr_ss;
+
+	char local_ip[INET6_ADDRSTRLEN];
+	unsigned short local_port;
+	socklen_t addr_len = sizeof(struct sockaddr_storage);
+	getsockname(sock, local_addr, &addr_len);
+	parse_sockaddr(local_addr, local_ip, &local_port);
+	
+	printf("sending bytes\n");
+
+	ssize_t nsent = sendto(sock, request, 8, 0, remote_addr, addr_len);
+
+	unsigned char buf[256];
+	printf("receiving bytes\n");
+	ssize_t nreceived = recvfrom(sock, buf, 256, 0, remote_addr, &addr_len);
+	
+	printf("Sent %ld bytes. Sent %ld bytes.\n", nsent, nreceived);
+	print_bytes(buf, nreceived);
 }
 
 
