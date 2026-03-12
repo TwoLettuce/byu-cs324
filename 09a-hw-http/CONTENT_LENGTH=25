@@ -1,0 +1,1 @@
+username=user&password=pw QUERY_STRING=univ=byu&class=CS324&msg=hello%3Dworld%21 ./www/cgi-bin/cgiprog

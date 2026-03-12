@@ -1,0 +1,21 @@
+*   Trying 2620:10f:3007:a002:a6bb:6dff:fe81:8328:10000...
+* connect to 2620:10f:3007:a002:a6bb:6dff:fe81:8328 port 10000 failed: Connection refused
+*   Trying 10.52.0.67:10000...
+* Connected to california (10.52.0.67) port 10000 (#0)
+> GET /bar.txt HTTP/1.1
+> Host: california:10000
+> User-Agent: curl/7.76.1
+> Accept: */*
+> 
+* Mark bundle as not supporting multiuse
+* HTTP 1.0, assume close after body
+< HTTP/1.0 200 OK
+< Server: SimpleHTTP/0.6 Python/3.9.23
+< Date: Thu, 12 Mar 2026 18:08:57 GMT
+< Content-type: text/plain
+< Content-Length: 6
+< Last-Modified: Fri, 09 Jan 2026 18:15:47 GMT
+< 
+{ [6 bytes data]
+* Closing connection 0
+hello

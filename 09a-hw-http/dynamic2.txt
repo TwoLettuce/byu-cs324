@@ -1,0 +1,25 @@
+*   Trying 2620:10f:3007:a002:a6bb:6dff:fe81:8328:10000...
+* connect to 2620:10f:3007:a002:a6bb:6dff:fe81:8328 port 10000 failed: Connection refused
+*   Trying 10.52.0.67:10000...
+* Connected to california (10.52.0.67) port 10000 (#0)
+> POST /cgi-bin/cgiprog?univ=byu&class=CS324&msg=hey HTTP/1.1
+> Host: california:10000
+> User-Agent: curl/7.76.1
+> Accept: */*
+> Content-Length: 67
+> Content-Type: application/x-www-form-urlencoded
+> 
+} [67 bytes data]
+* Mark bundle as not supporting multiuse
+* HTTP 1.0, assume close after body
+< HTTP/1.0 200 Script output follows
+< Server: SimpleHTTP/0.6 Python/3.9.23
+< Date: Thu, 12 Mar 2026 18:59:03 GMT
+< Content-Type: text/plain
+< Content-Length: 137
+< 
+{ [137 bytes data]
+* Closing connection 0
+Hello CS324
+Query string: univ=byu&class=CS324&msg=hey
+Request body: username=user&pahuefih82h3r2ufihuy72ghju8hu8y7gt6frtvgbhyjnugtf6rgv

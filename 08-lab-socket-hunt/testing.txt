@@ -1,0 +1,1737 @@
+argv[0] = ./treasure_hunter
+argv[1] = carolina
+argv[2] = 32400
+argv[3] = 3
+argv[4] = 12312
+argv[5] = -v
+zero_byte = 0
+USERID = 7239f401
+level = 03
+seed = 3018
+
+00: 00 03 72 39  F4 01 30 18  . . r 9 . . 0 .
+sending bytes
+receiving bytes
+Sent 8 bytes. Received 19 bytes.
+
+00: 0B 41 6E 64  20 49 20 61  . A n d . I . a
+08: 6C 73 6F 20  01 C6 99 3F  l s o . . . . ?
+10: 26 8B 5F                  & . _          
+chunk length: 11
+chunk:
+And I also 
+Op Code: 1
+Op Param: 50841
+nonce received: 5f8b263f
+nonce host = 3f268b60
+nonce response host = 3f268b60
+nonce sent: 608b263f
+
+00: 3F 26 8B 60               ? & . `        
+
+Treasure: And I also зM
+receiving bytes
+Sent 4 bytes. Received 23 bytes.
+
+00: 0F 72 65 6D  65 6D 62 65  . r e m e m b e
+08: 72 20 74 68  61 74 20 74  r . t h a t . t
+10: 01 3E 99 ED  AF D8 4C     . > . . . . L  
+chunk length: 15
+chunk:
+remember that t
+Op Code: 1
+Op Param: 16025
+nonce received: 4cd8afed
+nonce host = edafd84d
+nonce response host = edafd84d
+nonce sent: 4dd8afed
+
+00: ED AF D8 4D               . . . M        
+
+Treasure: And I also remember that t\йќ
+receiving bytes
+Sent 4 bytes. Received 26 bytes.
+
+00: 12 68 6F 75  20 68 61 73  . h o u . h a s
+08: 74 20 73 61  69 64 20 74  t . s a i d . t
+10: 68 61 74 02  7A 1C C3 9C  h a t . z . . .
+18: 54 8F                     T .            
+chunk length: 18
+chunk:
+hou hast said that
+Op Code: 2
+Op Param: 31260
+nonce received: 8f549cc3
+nonce host = c39c5490
+nonce response host = c39c5490
+nonce sent: 90549cc3
+
+00: C3 9C 54 90               . . T .        
+
+Treasure: And I also remember that thou hast said thatM
+receiving bytes
+Sent 4 bytes. Received 28 bytes.
+
+00: 14 20 74 68  6F 75 20 68  . . t h o u . h
+08: 61 73 74 20  70 72 65 70  a s t . p r e p
+10: 61 72 65 64  20 02 41 89  a r e d . . A .
+18: B3 14 84 E7               . . . .        
+chunk length: 20
+chunk:
+ thou hast prepared 
+Op Code: 2
+Op Param: 16777
+nonce received: e78414b3
+nonce host = b31484e8
+nonce response host = b31484e8
+nonce sent: e88414b3
+
+00: B3 14 84 E8               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared ар\йќ
+receiving bytes
+Sent 4 bytes. Received 28 bytes.
+
+00: 14 61 20 68  6F 75 73 65  . a . h o u s e
+08: 20 66 6F 72  20 6D 61 6E  . f o r . m a n
+10: 2C 20 79 65  61 01 17 4C  , . y e a . . L
+18: 10 4A D7 77               . J . w        
+chunk length: 20
+chunk:
+a house for man, yea
+Op Code: 1
+Op Param: 5964
+nonce received: 77d74a10
+nonce host = 104ad778
+nonce response host = 104ad778
+nonce sent: 78d74a10
+
+00: 10 4A D7 78               . J . x        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea
+receiving bytes
+Sent 4 bytes. Received 19 bytes.
+
+00: 0B 2C 20 65  76 65 6E 20  . , . e v e n .
+08: 61 6D 6F 6E  01 F3 F1 BC  a m o n . . . .
+10: 0F 0C 8B                  . . .          
+chunk length: 11
+chunk:
+, even amon
+Op Code: 1
+Op Param: 62449
+nonce received: 8b0c0fbc
+nonce host = bc0f0c8c
+nonce response host = bc0f0c8c
+nonce sent: 8c0c0fbc
+
+00: BC 0F 0C 8C               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even amon
+receiving bytes
+Sent 4 bytes. Received 18 bytes.
+
+00: 0A 67 20 74  68 65 20 6D  . g . t h e . m
+08: 61 6E 73 01  6D 42 5A 49  a n s . m B Z I
+10: 5E C8                     ^ .            
+chunk length: 10
+chunk:
+g the mans
+Op Code: 1
+Op Param: 27970
+nonce received: c85e495a
+nonce host = 5a495ec9
+nonce response host = 5a495ec9
+nonce sent: c95e495a
+
+00: 5A 49 5E C9               Z I ^ .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mans
+receiving bytes
+Sent 4 bytes. Received 28 bytes.
+
+00: 14 69 6F 6E  73 20 6F 66  . i o n s . o f
+08: 20 74 68 79  20 46 61 74  . t h y . F a t
+10: 68 65 72 2C  20 03 00 01  h e r , . . . .
+18: 00 00 00 00               . . . .        
+chunk length: 20
+chunk:
+ions of thy Father, 
+Op Code: 3
+Op Param: 1
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
+chunk length: 132
+chunk:
+
+Op Code: 0
+Op Param: 0
+nonce received: 00000000
+nonce host = 00000001
+nonce response host = 00000001
+nonce sent: 01000000
+
+00: 00 00 00 01               . . . .        
+
+Treasure: And I also remember that thou hast said that thou hast prepared a house for man, yea, even among the mansions of thy Father, 
+receiving bytes
+Sent 4 bytes. Received 1 bytes.
+
+00: 84                        .              
