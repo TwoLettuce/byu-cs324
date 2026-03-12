@@ -184,6 +184,27 @@ int main(int argc, char *argv[]) {
 			}
 			nonce = new_nonce+1;
 	
+		} else if (op_code == 4){
+			unsigned short new_remote_port = op_param;
+			if (addr_fam == AF_INET){
+				hints.ai_family = AF_INET6;
+			} else {
+				hints.ai_family = AF_INET;
+			}
+			char port_str[50];
+			sprintf(port_str, "%d", new_remote_port);
+			getaddrinfo(argv[1], port_str, &hints, &result);
+
+			char addr_str[INET6_ADDRSTRLEN];
+			inet_ntop(result->ai_family, result->ai_addr, addr_str, sizeof(addr_str));
+			printf("Address: %s\n", addr_str);
+
+			memcpy(remote_addr, result->ai_addr, sizeof(struct sockaddr_storage));
+			close(sock);
+			sock = socket(result->ai_family, result->ai_socktype, 0);
+			populate_sockaddr(remote_addr, hints.ai_family, addr_str, new_remote_port); 
+	
+			addr_fam = hints.ai_family;
 		}
 
 		nonce_nw = htonl(nonce);
