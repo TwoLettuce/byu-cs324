@@ -1,5 +1,11 @@
 #include <stdio.h>
 #include <string.h>
+#include <arpa/inet.h>
+#include <netdb.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/socket.h>
 
 #include "sockhelper.h"
 
@@ -12,7 +18,7 @@ int complete_request_received(char *);
 void parse_request(char *, char *, char *, char *, char *);
 void test_parser();
 void print_bytes(unsigned char *, int);
-void open_sfd();
+int open_sfd();
 
 
 int main(int argc, char *argv[])
@@ -94,7 +100,59 @@ void parse_request(char *request, char *method,
 	}
 }
 
-void open_sfd() {
+int open_sfd(char* host, char* port) {
+	int af = AF_INET;
+	struct addrinfo hints;
+	memset(&hints, 0, sizeof(struct addrinfo));
+
+	hints.ai_family = af;
+	hints.ai_socktype = SOCK_STREAM;
+
+	struct addrinfo *result;
+	getaddrinfo(host, port, &hints, &result);
+
+	int sfd;
+	int addr_fam;
+	socklen_t addr_len;
+
+	struct sockaddr_storage local_addr_ss;
+	struct sockaddr* local_addr = (struct sockaddr*)&local_addr_ss;
+	char local_ip[INET6_ADDRSTRLEN];
+	unsigned short local_port;
+	
+	struct sockaddr_storage remote_addr_ss;
+	struct sockaddr *remote_addr = (struct sockaddr*)&remote_addr_ss;
+	char remote_ip[INET6_ADDRSTRLEN];
+	unsigned short remote_port;
+
+	struct addrinfo *rp;
+	for (rp = result; rp != NULL; rp = rp->ai_next) {
+		sfd = socket(rp->ai_family, rp->ai_socktype, 0);
+
+		if (sfd < 0){
+			continue;
+		}
+
+		addr_fam = rp->ai_family;
+		addr_len = rp->ai_addrlen;
+		memcpy(remote_addr, rp->ai_addr, sizeof(struct sockaddr_storage));
+		parse_sockaddr(remote_addr, remote_ip, &remote_port);
+		fprintf(stderr, "Connecting to %s:%d\n", remote_ip, remote_port);
+		if (connect(sfd, remote_addr, addr_len) >= 0){
+			break;
+		}
+		close(sfd);
+
+	}
+
+	if (rp == NULL) {
+		fprintf(stderr, "Could not connect\n");
+		exit(EXIT_FAILURE);
+	}
+
+	freeaddrinfo(result);
+
+
 
 }
 
