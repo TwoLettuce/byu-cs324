@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 
 #include "sockhelper.h"
 
@@ -11,21 +12,90 @@ int complete_request_received(char *);
 void parse_request(char *, char *, char *, char *, char *);
 void test_parser();
 void print_bytes(unsigned char *, int);
+void open_sfd();
 
 
 int main(int argc, char *argv[])
 {
-	test_parser();
 	printf("%s\n", user_agent_hdr);
 	return 0;
 }
 
 int complete_request_received(char *request) {
-	return 0;
+	char* str = strstr(request, "\r\n\r\n");
+	return str != NULL;
 }
 
+/*
+ * WARNING: LLM GENERATED CODE
+ * LLM used: ChatGPT
+ * prompt: I am writing code for a proxy server in C as part of 
+ * a lab assignment in my CS324 class. One of the functions I am
+ * writing is called parse_request. 
+ * Write the code for this function such that it: 
+ * (Copied and pasted information from the spec)
+ *
+ * No editing was required to make this code work. 
+ */
 void parse_request(char *request, char *method,
 		char *hostname, char *port, char *path) {
+	char *space1, *space2;
+	char url[2048];
+
+	//---- Extract METHOD ----
+	space1 = strchr(request, ' ');
+	strncpy(method, request, space1 - request);
+	method[space1 - request] = '\0';
+
+	// ---- Extract URL ----
+	space2 = strchr(space1 + 1, ' ');
+	strncpy(url, space1 + 1, space2 - (space1 + 1));
+	url[space2 - (space1 + 1)] = '\0';
+
+	// ---- Skip protocol (http://) ----
+	char *after_protocol = strstr(url, "://");
+	if (after_protocol) {
+		after_protocol += 3;
+	} else {
+		after_protocol = url;
+	}
+
+	char *colon = strchr(after_protocol, ':');
+	char *slash = strchr(after_protocol, '/');
+
+	if (colon && slash && colon < slash) {
+		// ---- Port specified ----
+		// hostname
+		strncpy(hostname, after_protocol, colon - after_protocol);
+		hostname[colon - after_protocol] = '\0';
+
+		// port
+		strncpy(port, colon + 1, slash - (colon + 1));
+		port[slash - (colon + 1)] = '\0';
+
+		// path
+		strcpy(path, slash);
+	} else {
+		// ---- No port specified ----
+		strcpy(port, "80");
+		if (slash) {
+
+			// hostname
+			strncpy(hostname, after_protocol, slash - after_protocol);
+			hostname[slash - after_protocol] = '\0';
+
+			// path
+			strcpy(path, slash);
+		} else {
+			// URL with no explicit path
+			strcpy(hostname, after_protocol);
+			strcpy(path, "/");
+		}
+	}
+}
+
+void open_sfd() {
+
 }
 
 void test_parser() {
