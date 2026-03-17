@@ -71,6 +71,7 @@ int open_sfd(char* host, char* port) {
 void handle_client(int sfd){
 
 	unsigned char buf[1024];
+	memset(buf, 0, sizeof(buf));
 	int bytes_recvd = -1;
 	int total_recvd = 0;
 	while(!complete_request_received((char*)buf)){
@@ -87,8 +88,23 @@ void handle_client(int sfd){
 	printf("HOSTNAME: %s\n", hostname);
 	printf("PORT: %s\n", port);
 	printf("PATH: %s\n", path);
-	close(sfd);
 
+	char req[1024];
+	memset(req, 0, sizeof(req));
+	sprintf(req, "%s %s HTTP/1.0\r\n", method, path);
+	sprintf(req+strlen(req), "Host: %s:%s\r\n", hostname, port);
+	if (strcmp(port, "80") == 0){
+		sprintf(req+strlen(req), "\r\n");
+	} else {
+		sprintf(req+strlen(req), ":%s\r\n", port);
+	}
+	sprintf(req+strlen(req), "User-Agent: %s\r\n", user_agent_hdr);
+	sprintf(req+strlen(req), "Connection: close\r\n");
+	sprintf(req+strlen(req), "Proxy-Connection: close\r\n");
+	sprintf(req+strlen(req), "\r\n");
+	req[strlen(req)] = '\0';		
+	print_bytes((unsigned char*) req, strlen(req));
+	close(sfd);
 }
 
 /*
