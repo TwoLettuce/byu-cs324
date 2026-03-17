@@ -18,18 +18,78 @@ int complete_request_received(char *);
 void parse_request(char *, char *, char *, char *, char *);
 void test_parser();
 void print_bytes(unsigned char *, int);
-int open_sfd();
-
+int open_sfd(char* host, char* port);
+void handle_client(int csfd);
 
 int main(int argc, char *argv[])
 {
 	printf("%s\n", user_agent_hdr);
+
+	int sfd = open_sfd("localhost", argv[1]);
+	int csfd;
+	while(1) {
+		csfd = accept(sfd, NULL, NULL);
+		if (csfd < 0) {
+			perror("accept refused");
+		} else {
+			fprintf(stderr, "accepted!\n");
+			handle_client(csfd);
+		}
+	}
+
+
 	return 0;
 }
 
 int complete_request_received(char *request) {
 	char* str = strstr(request, "\r\n\r\n");
 	return str != NULL;
+}
+
+
+int open_sfd(char* host, char* port) {
+	int sfd = socket(AF_INET, SOCK_STREAM, 0);
+	int optval = 1;
+	setsockopt(sfd, SOL_SOCKET, SO_REUSEPORT, &optval, sizeof(optval));
+
+	struct sockaddr_in addr;
+	addr.sin_family = AF_INET;
+	addr.sin_port = htons(strtol(port, NULL, 10));
+	addr.sin_addr.s_addr = INADDR_ANY;
+
+	if (bind(sfd, (struct sockaddr*)&addr, INET6_ADDRSTRLEN) < 0){
+		perror("bind failed");
+	}
+
+	if(listen(sfd, 10) < 0){
+
+		perror("listen failed");
+	}
+	return sfd;
+}
+
+void handle_client(int sfd){
+
+	unsigned char buf[1024];
+	memset(buf, 0, sizeof(buf));
+	int bytes_recvd = -1;
+	int total_recvd = 0;
+	while(!complete_request_received((char*)buf)){
+		bytes_recvd = recv(sfd, buf+total_recvd, 64, 0);
+		total_recvd += bytes_recvd;
+		fprintf(stderr, "total: %d\n this: %d\n", total_recvd, bytes_recvd);
+	}
+	buf[total_recvd] = '\0';
+	print_bytes(buf, total_recvd);
+
+	char method[16], hostname[64], port[8], path[64];
+	parse_request((char*) buf, method, hostname, port, path);
+	printf("METHOD: %s\n", method);
+	printf("HOSTNAME: %s\n", hostname);
+	printf("PORT: %s\n", port);
+	printf("PATH: %s\n", path);
+	close(sfd);
+
 }
 
 /*
@@ -98,62 +158,6 @@ void parse_request(char *request, char *method,
 			strcpy(path, "/");
 		}
 	}
-}
-
-int open_sfd(char* host, char* port) {
-	int af = AF_INET;
-	struct addrinfo hints;
-	memset(&hints, 0, sizeof(struct addrinfo));
-
-	hints.ai_family = af;
-	hints.ai_socktype = SOCK_STREAM;
-
-	struct addrinfo *result;
-	getaddrinfo(host, port, &hints, &result);
-
-	int sfd;
-	int addr_fam;
-	socklen_t addr_len;
-
-	struct sockaddr_storage local_addr_ss;
-	struct sockaddr* local_addr = (struct sockaddr*)&local_addr_ss;
-	char local_ip[INET6_ADDRSTRLEN];
-	unsigned short local_port;
-	
-	struct sockaddr_storage remote_addr_ss;
-	struct sockaddr *remote_addr = (struct sockaddr*)&remote_addr_ss;
-	char remote_ip[INET6_ADDRSTRLEN];
-	unsigned short remote_port;
-
-	struct addrinfo *rp;
-	for (rp = result; rp != NULL; rp = rp->ai_next) {
-		sfd = socket(rp->ai_family, rp->ai_socktype, 0);
-
-		if (sfd < 0){
-			continue;
-		}
-
-		addr_fam = rp->ai_family;
-		addr_len = rp->ai_addrlen;
-		memcpy(remote_addr, rp->ai_addr, sizeof(struct sockaddr_storage));
-		parse_sockaddr(remote_addr, remote_ip, &remote_port);
-		fprintf(stderr, "Connecting to %s:%d\n", remote_ip, remote_port);
-		if (connect(sfd, remote_addr, addr_len) >= 0){
-			break;
-		}
-		close(sfd);
-
-	}
-
-	if (rp == NULL) {
-		fprintf(stderr, "Could not connect\n");
-		exit(EXIT_FAILURE);
-	}
-
-	freeaddrinfo(result);
-
-
-
 }
 
 void test_parser() {
