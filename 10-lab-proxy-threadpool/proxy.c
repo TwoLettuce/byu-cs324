@@ -166,18 +166,20 @@ void handle_client(int sfd){
 	
 	send(ssfd, req, strlen(req), 0);
 
-	char serverbuf[16384];
-	memset(serverbuf, 0, sizeof(serverbuf));
+	char response[16384];
+	memset(response, 0, sizeof(response));
 	
 	bytes_recvd = -1;
 	total_recvd = 0;
 	while (bytes_recvd != 0){
-		bytes_recvd = recv(ssfd, serverbuf+total_recvd, 128, 0);
+		bytes_recvd = recv(ssfd, response+total_recvd, 128, 0);
 		total_recvd += bytes_recvd;
 	}
 
-	print_bytes((unsigned char*) serverbuf, total_recvd);
+	print_bytes((unsigned char*) response, total_recvd);
 	close(ssfd);
+
+	send(sfd, response, total_recvd, 0);
 	close(sfd);
 }
 

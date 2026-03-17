@@ -146,7 +146,7 @@ void handle_client(int sfd){
 		parse_sockaddr(remote_addr, remote_ip, &remote_port);
 		fprintf(stderr, "Connecting to %s:%d (addr family: %d)\n", remote_ip, remote_port, addr_fam);
 
-		if (connect(sfd, remote_addr, addr_len) >= 0){
+		if (connect(ssfd, remote_addr, addr_len) >= 0){
 			break;
 		} 
 		close(ssfd);
@@ -166,18 +166,20 @@ void handle_client(int sfd){
 	
 	send(ssfd, req, strlen(req), 0);
 
-	char serverbuf[16384];
-	memset(serverbuf, 0, sizeof(serverbuf));
+	char response[16384];
+	memset(response, 0, sizeof(response));
 	
 	bytes_recvd = -1;
 	total_recvd = 0;
 	while (bytes_recvd != 0){
-		bytes_recvd = recv(ssfd, serverbuf+total_recvd, 128, 0);
+		bytes_recvd = recv(ssfd, response+total_recvd, 128, 0);
 		total_recvd += bytes_recvd;
 	}
 
-	print_bytes((unsigned char*) serverbuf, total_recvd);
+	print_bytes((unsigned char*) response, total_recvd);
 	close(ssfd);
+
+	send(sfd, response, strlen(response), 0);
 	close(sfd);
 }
 
