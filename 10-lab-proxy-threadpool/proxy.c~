@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <pthread.h>
 
 #include "sockhelper.h"
 
@@ -29,16 +30,24 @@ int main(int argc, char *argv[])
 	int csfd;
 	while(1) {
 		csfd = accept(sfd, NULL, NULL);
+		pthread_t tid;
 		if (csfd < 0) {
 			perror("accept refused");
 		} else {
-			fprintf(stderr, "accepted!\n");
-			handle_client(csfd);
+			pthread_create(&tid, NULL, &start_thread, &csfd);
+			fprintf(stderr, "accepted on thread with id: %ld\n", tid);
 		}
 	}
 
 
 	return 0;
+}
+
+void* start_thread(void* arg){
+	pthread_detach(pthread_self());
+	int* csfd = (int*) arg;
+	handle_client(*csfd);
+	return NULL;
 }
 
 int complete_request_received(char *request) {
@@ -114,7 +123,10 @@ void handle_client(int sfd){
 	struct addrinfo *result;
 	int s;
 	s = getaddrinfo(hostname, port, &hints, &result);
-	
+	if (s < 0){
+		perror("getaddrinfo");
+	}
+
 	int ssfd;
 	int addr_fam;
 	socklen_t addr_len;
@@ -179,7 +191,7 @@ void handle_client(int sfd){
 	print_bytes((unsigned char*) response, total_recvd);
 	close(ssfd);
 
-	send(sfd, response, strlen(response), 0);
+	send(sfd, response, total_recvd, 0);
 	close(sfd);
 }
 

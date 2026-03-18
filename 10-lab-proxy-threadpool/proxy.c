@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <pthread.h>
 
 #include "sockhelper.h"
 
@@ -14,6 +15,7 @@
 
 static const char *user_agent_hdr = "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:97.0) Gecko/20100101 Firefox/97.0";
 
+void* start_thread(void*);
 int complete_request_received(char *);
 void parse_request(char *, char *, char *, char *, char *);
 void test_parser();
@@ -29,16 +31,24 @@ int main(int argc, char *argv[])
 	int csfd;
 	while(1) {
 		csfd = accept(sfd, NULL, NULL);
+		pthread_t tid;
 		if (csfd < 0) {
 			perror("accept refused");
 		} else {
-			fprintf(stderr, "accepted!\n");
-			handle_client(csfd);
+			pthread_create(&tid, NULL, &start_thread, &csfd);
+			fprintf(stderr, "accepted on thread with id: %ld\n", tid);
 		}
 	}
 
 
 	return 0;
+}
+
+void* start_thread(void* arg){
+	pthread_detach(pthread_self());
+	int* csfd = (int*) arg;
+	handle_client(*csfd);
+	return NULL;
 }
 
 int complete_request_received(char *request) {
@@ -114,7 +124,10 @@ void handle_client(int sfd){
 	struct addrinfo *result;
 	int s;
 	s = getaddrinfo(hostname, port, &hints, &result);
-	
+	if (s < 0){
+		perror("getaddrinfo");
+	}
+
 	int ssfd;
 	int addr_fam;
 	socklen_t addr_len;
