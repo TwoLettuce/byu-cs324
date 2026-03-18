@@ -7,14 +7,19 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <pthread.h>
+#include <semaphore.h>
 
 #include "sockhelper.h"
+#include "sbuf.h"
 
 /* Recommended max object size */
 #define MAX_OBJECT_SIZE 102400
 
+sbuf_t sbuf;
+
 static const char *user_agent_hdr = "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:97.0) Gecko/20100101 Firefox/97.0";
 
+void* start_thread(void*);
 int complete_request_received(char *);
 void parse_request(char *, char *, char *, char *, char *);
 void test_parser();
@@ -22,31 +27,64 @@ void print_bytes(unsigned char *, int);
 int open_sfd(char* host, char* port);
 void handle_client(int csfd);
 
+sem_t mutex;
+sem_t items;
+sem_t slots;
+
 int main(int argc, char *argv[])
 {
 	printf("%s\n", user_agent_hdr);
 
 	int sfd = open_sfd("localhost", argv[1]);
+
+	sem_init(&mutex, 0, 1);
+	sem_init(&items, 0, 0);
+	sem_init(&slots, 0, 8);
+
+	int sbuf_size = 5;
+	sbuf_init(&sbuf, sbuf_size);
+
+	int nthreads = 8;
+	pthread_t tid;
+	for (int i = 0; i < nthreads; i++){
+		pthread_create(&tid, NULL, start_thread, NULL);
+	}
+
 	int csfd;
 	while(1) {
 		csfd = accept(sfd, NULL, NULL);
+		fprintf(stderr, "accepted!");
 		pthread_t tid;
 		if (csfd < 0) {
 			perror("accept refused");
 		} else {
-			pthread_create(&tid, NULL, &start_thread, &csfd);
-			fprintf(stderr, "accepted on thread with id: %ld\n", tid);
+			fprintf(stderr, "producer waiting!");
+			sem_wait(&slots);
+			sem_wait(&mutex);
+			fprintf(stderr, "producer done waiting!");
+			sbuf_insert(&sbuf, csfd);
+			sem_post(&mutex);
+			sem_post(&items);
 		}
 	}
-
 
 	return 0;
 }
 
-void* start_thread(void* arg){
+void* start_thread(void* vargp){
 	pthread_detach(pthread_self());
-	int* csfd = (int*) arg;
-	handle_client(*csfd);
+	int csfd;	
+	
+	while (1) {
+		fprintf(stderr, "producer waiting!");
+		sem_wait(&items);
+		sem_wait(&mutex);
+		fprintf(stderr, "producer done waiting!");
+		csfd = sbuf_remove(&sbuf);
+		sem_post(&mutex);
+		handle_client(csfd);
+		sem_post(&slots);
+	}	
 	return NULL;
 }
 
