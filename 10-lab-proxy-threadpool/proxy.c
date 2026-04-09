@@ -240,7 +240,6 @@ void handle_client(int sfd){
  * writing is called parse_request. 
  * Write the code for this function such that it: 
  * (Copied and pasted information from the spec)
- *
  * No editing was required to make this code work. 
  */
 void parse_request(char *request, char *method,

@@ -54,7 +54,6 @@ int main(int argc, char *argv[])
 	while(1) {
 		csfd = accept(sfd, NULL, NULL);
 		fprintf(stderr, "accepted!");
-		pthread_t tid;
 		if (csfd < 0) {
 			perror("accept refused");
 		} else {
