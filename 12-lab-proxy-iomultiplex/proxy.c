@@ -77,7 +77,8 @@ int main(int argc, char *argv[])
 		}
 
 		for (int i = 0; i < REQ_INFO_SIZE; i++){
-			if (FD_ISSET(i, &readcpy) || FD_ISSET(info[i].ssfd, &writecpy)) {
+			if (FD_ISSET(i, &readcpy) || FD_ISSET(info[i].ssfd, &writecpy)
+					|| FD_ISSET(i, &writecpy) || FD_ISSET(info[i].ssfd, &readcpy)) {
 				nfds--;
 				if (i == sfd){
 					handle_new_clients(sfd);
@@ -162,12 +163,12 @@ void handle_new_clients(int sfd) {
 
 void handle_client(struct request_info* info){
 	fprintf(stderr, "csfd: %d\n", info->csfd);
+	fprintf(stderr, "ssfd: %d\n", info->ssfd);
 	fprintf(stderr, "state: %d\n", info->state);
-
+	char buf[1024];
 	switch(info->state){
 		case READ_REQUEST:
 			fprintf(stderr, "reading!\n");
-			char buf[1024];
 			memset(buf, 0, sizeof(buf));
 			memcpy(buf, info->buf, info->total_read_c);
 			int bytes_recvd = -1;
@@ -212,6 +213,8 @@ void handle_client(struct request_info* info){
 				sprintf(req+strlen(req), "Proxy-Connection: close\r\n");
 				sprintf(req+strlen(req), "\r\n");
 				req[strlen(req)] = '\0';
+				memcpy(info->buf, req, strlen(req));
+				info->bytes_to_write = strlen(req);
 				print_bytes(req, strlen(req));
 
 				struct addrinfo hints;
@@ -284,13 +287,45 @@ void handle_client(struct request_info* info){
 				FD_SET(ssfd, &writefds);
 				info->ssfd = ssfd;
 				info->state = SEND_REQUEST;
-				close(info->csfd);
 				break;
 			}
 			break;
 		case SEND_REQUEST:
 			fprintf(stderr, "sending request!\n");
-			FD_CLR(info->ssfd, &writefds);
+			memset(buf, 0, sizeof(buf));
+			memcpy(buf, info->buf, info->total_read_c);
+			int bytes_written = -1;
+			int total_written = info->total_written_s;
+			while(1) {
+				bytes_written = send(info->ssfd, buf+total_written, info->bytes_to_write, 0);
+				if (bytes_written < 0) {
+					fprintf(stderr, "error occured with send!\n");
+					if (errno == EAGAIN || errno == EWOULDBLOCK){
+						info->total_written_s = total_written;
+						return;
+					} else {
+						perror("send to server");
+						FD_CLR(info->ssfd, &writefds);
+						close(info->csfd);
+						close(info->ssfd);
+						free(info);
+						return;
+					}
+				}
+				info->bytes_to_write -= bytes_written;
+				total_written += bytes_written;
+				if (info->bytes_to_write == 0){
+					fprintf(stderr, "done sending!\n");
+					FD_CLR(info->ssfd, &writefds);
+					FD_SET(info->ssfd, &readfds);
+					info->state = READ_RESPONSE;
+					break;
+				}
+			}
+			break;
+		case READ_RESPONSE:
+			fprintf(stderr, "reading response!\n");
+			FD_CLR(info->ssfd, &readfds);
 			break;
 	}
 }
