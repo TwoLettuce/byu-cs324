@@ -27,7 +27,7 @@ struct request_info {
 	int csfd;
 	int ssfd;
 	char state;
-	char buf[1024];
+	char buf[16384];
 	int total_read_c;
 	int bytes_to_write;
 	int total_written_s;
@@ -144,7 +144,7 @@ void handle_new_clients(int sfd) {
 		client.csfd = csfd;	
 		client.ssfd = 0;
 		client.state = READ_REQUEST;
-		char buf[1024];
+		char buf[16384];
 		memset(buf, 0, sizeof(buf));
 		memcpy(client.buf, buf, sizeof(buf));
 		client.total_read_c = 0;
@@ -165,15 +165,18 @@ void handle_client(struct request_info* info){
 	fprintf(stderr, "csfd: %d\n", info->csfd);
 	fprintf(stderr, "ssfd: %d\n", info->ssfd);
 	fprintf(stderr, "state: %d\n", info->state);
-	char buf[1024];
+	char buf[16384];
+	int bytes_recvd = -1;
+	int total_recvd = 0;
+	int bytes_written = -1;
+	int total_written = info->total_written_s;
+
 	switch(info->state){
 		case READ_REQUEST:
-			fprintf(stderr, "reading!\n");
+			fprintf(stderr, "reading request!\n");
 			memset(buf, 0, sizeof(buf));
 			memcpy(buf, info->buf, info->total_read_c);
-			int bytes_recvd = -1;
-			int total_recvd = info->total_read_c;
-			write(2, buf, total_recvd);
+			total_recvd = info->total_read_c;
 			while(!complete_request_received(buf)){
 				bytes_recvd = recv(info->csfd, buf+total_recvd, 1024, 0);
 				if (bytes_recvd < 0) {
@@ -189,113 +192,115 @@ void handle_client(struct request_info* info){
 					}	
 				}
 				total_recvd += bytes_recvd;
-				buf[total_recvd] = '\0';
-				print_bytes(buf, total_recvd);
 				memcpy(info->buf, buf, strlen(buf));
-				char method[16], hostname[64], port[8], path[128];
-				parse_request(buf, method, hostname, port, path);
-				printf("METHOD: %s\n", method);
-				printf("HOSTNAME: %s\n", hostname);
-				printf("PORT: %s\n", port);
-				printf("PATH: %s\n", path);
-				char req[1024];
-				memset(req, 0, sizeof(req));
-				sprintf(req, "%s %s HTTP/1.0\r\n", method, path);
-				sprintf(req+strlen(req), "Host: %s", hostname);
-
-				if (strcmp(port, "80") == 0){
-					sprintf(req+strlen(req), "\r\n");
-				} else {
-					sprintf(req+strlen(req), ":%s\r\n", port);
-				}
-				sprintf(req+strlen(req), "User-Agent: %s\r\n", user_agent_hdr);
-				sprintf(req+strlen(req), "Connection: close\r\n");
-				sprintf(req+strlen(req), "Proxy-Connection: close\r\n");
-				sprintf(req+strlen(req), "\r\n");
-				req[strlen(req)] = '\0';
-				memcpy(info->buf, req, strlen(req));
-				info->bytes_to_write = strlen(req);
-				print_bytes(req, strlen(req));
-
-				struct addrinfo hints;
-				memset(&hints, 0, sizeof(struct addrinfo));
-				hints.ai_family = AF_INET;
-				hints.ai_socktype = SOCK_STREAM;
-
-				struct addrinfo *result;
-				int s;
-				s = getaddrinfo(hostname, port, &hints, &result);
-				if (s < 0){
-					perror("getaddrinfo");
-				}
-
-				int ssfd;
-				int addr_fam;
-				socklen_t addr_len;
-
-				struct sockaddr_storage local_addr_ss;
-				struct sockaddr* local_addr = (struct sockaddr*)&local_addr_ss;
-				char local_ip[INET_ADDRSTRLEN];
-				unsigned short local_port;
-
-				struct sockaddr_storage remote_addr_ss;
-				struct sockaddr* remote_addr = (struct sockaddr*)&remote_addr_ss;
-				char remote_ip[INET_ADDRSTRLEN];
-				unsigned short remote_port;
-
-
-				struct addrinfo *rp;
-				for (rp = result; rp != NULL; rp = rp->ai_next){
-					ssfd = socket(rp->ai_family, rp->ai_socktype, 0);
-					if (ssfd < 0){
-						perror("socket error");
-						continue;
-					}
-
-					addr_fam = rp->ai_family;
-					addr_len = rp->ai_addrlen;
-
-					memcpy(remote_addr, rp->ai_addr, sizeof(struct sockaddr_storage));
-
-					parse_sockaddr(remote_addr, remote_ip, &remote_port);
-					fprintf(stderr, "Connecting to %s:%d (addr family: %d)\n", remote_ip, remote_port, addr_fam);
-
-					if (connect(ssfd, remote_addr, addr_len) >= 0){
-						break;
-					}
-					close(ssfd);
-				}
-				if (rp == NULL) {
-					fprintf(stderr, "ERROR CONNECTING TO SERVER\n");
-					perror("server error");
-					exit(EXIT_FAILURE);
-				}
-				freeaddrinfo(result);
-
-				addr_len = sizeof(struct sockaddr_storage);
-				s = getsockname(ssfd, local_addr, &addr_len);
-
-				parse_sockaddr(local_addr, local_ip, &local_port);
-				fprintf(stderr, "Local socket info: %s:%d (addr fam: %d)\n", local_ip, local_port, addr_fam);
-
-
-				if (fcntl(ssfd, F_SETFL, fcntl(ssfd, F_GETFL, 0) | O_NONBLOCK) < 0) {
-					perror("nonblocking refused");
-				}
-
-				FD_CLR(info->csfd, &readfds);
-				FD_SET(ssfd, &writefds);
-				info->ssfd = ssfd;
-				info->state = SEND_REQUEST;
-				break;
 			}
+			info->total_read_c = total_recvd;
+			buf[total_recvd] = '\0';
+			print_bytes(buf, total_recvd);
+			char method[16], hostname[64], port[8], path[128];
+			parse_request(buf, method, hostname, port, path);
+			printf("METHOD: %s\n", method);
+			printf("HOSTNAME: %s\n", hostname);
+			printf("PORT: %s\n", port);
+			printf("PATH: %s\n", path);
+			char req[1024];
+			memset(req, 0, sizeof(req));
+			sprintf(req, "%s %s HTTP/1.0\r\n", method, path);
+			sprintf(req+strlen(req), "Host: %s", hostname);
+
+			if (strcmp(port, "80") == 0){
+				sprintf(req+strlen(req), "\r\n");
+			} else {
+				sprintf(req+strlen(req), ":%s\r\n", port);
+			}
+			sprintf(req+strlen(req), "User-Agent: %s\r\n", user_agent_hdr);
+			sprintf(req+strlen(req), "Connection: close\r\n");
+			sprintf(req+strlen(req), "Proxy-Connection: close\r\n");
+			sprintf(req+strlen(req), "\r\n");
+			req[strlen(req)] = '\0';
+			memcpy(info->buf, req, strlen(req));
+			info->bytes_to_write = strlen(req);
+			print_bytes(req, strlen(req));
+
+			struct addrinfo hints;
+			memset(&hints, 0, sizeof(struct addrinfo));
+			hints.ai_family = AF_INET;
+			hints.ai_socktype = SOCK_STREAM;
+
+			struct addrinfo *result;
+			int s;
+			s = getaddrinfo(hostname, port, &hints, &result);
+			if (s < 0){
+				perror("getaddrinfo");
+			}
+
+			int ssfd;
+			int addr_fam;
+			socklen_t addr_len;
+
+			struct sockaddr_storage local_addr_ss;
+			struct sockaddr* local_addr = (struct sockaddr*)&local_addr_ss;
+			char local_ip[INET_ADDRSTRLEN];
+			unsigned short local_port;
+
+			struct sockaddr_storage remote_addr_ss;
+			struct sockaddr* remote_addr = (struct sockaddr*)&remote_addr_ss;
+			char remote_ip[INET_ADDRSTRLEN];
+			unsigned short remote_port;
+
+
+			struct addrinfo *rp;
+			for (rp = result; rp != NULL; rp = rp->ai_next){
+				ssfd = socket(rp->ai_family, rp->ai_socktype, 0);
+				if (ssfd < 0){
+					perror("socket error");
+					continue;
+				}
+
+				addr_fam = rp->ai_family;
+				addr_len = rp->ai_addrlen;
+
+				memcpy(remote_addr, rp->ai_addr, sizeof(struct sockaddr_storage));
+
+				parse_sockaddr(remote_addr, remote_ip, &remote_port);
+				fprintf(stderr, "Connecting to %s:%d (addr family: %d)\n", remote_ip, remote_port, addr_fam);
+
+				fprintf(stderr, "attempt to connect\n");
+				if (connect(ssfd, remote_addr, addr_len) >= 0){
+					break;
+				}
+				close(ssfd);
+			}
+			if (rp == NULL) {
+				fprintf(stderr, "ERROR CONNECTING TO SERVER\n");
+				perror("server error");
+				exit(EXIT_FAILURE);
+			}
+			fprintf(stderr, "connect success\n");
+			freeaddrinfo(result);
+
+			addr_len = sizeof(struct sockaddr_storage);
+			s = getsockname(ssfd, local_addr, &addr_len);
+
+			parse_sockaddr(local_addr, local_ip, &local_port);
+			fprintf(stderr, "Local socket info: %s:%d (addr fam: %d)\n", local_ip, local_port, addr_fam);
+
+
+			if (fcntl(ssfd, F_SETFL, fcntl(ssfd, F_GETFL, 0) | O_NONBLOCK) < 0) {
+				perror("nonblocking refused");
+			}
+
+			FD_CLR(info->csfd, &readfds);
+			FD_SET(ssfd, &writefds);
+			info->ssfd = ssfd;
+			info->state = SEND_REQUEST;
 			break;
 		case SEND_REQUEST:
 			fprintf(stderr, "sending request!\n");
 			memset(buf, 0, sizeof(buf));
 			memcpy(buf, info->buf, info->total_read_c);
-			int bytes_written = -1;
-			int total_written = info->total_written_s;
+			bytes_written = -1;
+			total_written = info->total_written_s;
 			while(1) {
 				bytes_written = send(info->ssfd, buf+total_written, info->bytes_to_write, 0);
 				if (bytes_written < 0) {
@@ -316,16 +321,55 @@ void handle_client(struct request_info* info){
 				total_written += bytes_written;
 				if (info->bytes_to_write == 0){
 					fprintf(stderr, "done sending!\n");
+					memset(info->buf, 0, sizeof(info->buf));
 					FD_CLR(info->ssfd, &writefds);
 					FD_SET(info->ssfd, &readfds);
 					info->state = READ_RESPONSE;
+					buf[total_written] = '\0';
+					fprintf(stderr, "Request sent: %s\n", buf);
 					break;
 				}
 			}
 			break;
 		case READ_RESPONSE:
 			fprintf(stderr, "reading response!\n");
-			FD_CLR(info->ssfd, &readfds);
+			memset(buf, 0, sizeof(buf));
+			memcpy(buf, info->buf, info->total_read_s);
+			total_recvd = info->total_read_s;
+			while(!complete_request_received(buf)){
+				bytes_recvd = recv(info->ssfd, buf+total_recvd, 16384, 0);
+				fprintf(stderr, "received %d bytes\n", bytes_recvd);
+				if (bytes_recvd < 0) {
+					if (errno == EAGAIN || errno == EWOULDBLOCK){
+						info->total_read_s = total_recvd;
+						memcpy(info->buf, buf, total_recvd); 
+						return;
+					} else {
+						perror("recv");
+						close(info->csfd);
+						close(info->ssfd);
+						FD_CLR(info->csfd, &readfds);
+						free(info);
+						return;
+					}	
+				} else if (bytes_recvd == 0) {
+					fprintf(stderr, "done reading! Read %d bytes\n", total_recvd);
+					FD_SET(info->csfd, &writefds);
+					FD_CLR(info->ssfd, &readfds);
+					close(info->ssfd);
+					info->ssfd = -1;
+					memcpy(info->buf, buf, sizeof(buf));
+					print_bytes(buf, total_recvd);
+					info->state = SEND_RESPONSE;
+					return;
+				}
+
+				total_recvd += bytes_recvd;
+			}
+			break;
+		case SEND_RESPONSE:
+			fprintf(stderr, "Sending response!\n");
+			FD_CLR(info->csfd, &writefds);
 			break;
 	}
 }
