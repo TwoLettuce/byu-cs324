@@ -162,9 +162,6 @@ void handle_new_clients(int sfd) {
 }
 
 void handle_client(struct request_info* info){
-	fprintf(stderr, "csfd: %d\n", info->csfd);
-	fprintf(stderr, "ssfd: %d\n", info->ssfd);
-	fprintf(stderr, "state: %d\n", info->state);
 	char buf[16384];
 	int bytes_recvd = -1;
 	int total_recvd = 0;
@@ -192,10 +189,11 @@ void handle_client(struct request_info* info){
 					}	
 				}
 				total_recvd += bytes_recvd;
-				memcpy(info->buf, buf, strlen(buf));
+				memcpy(info->buf, buf, sizeof(buf));
 			}
 			info->total_read_c = total_recvd;
 			buf[total_recvd] = '\0';
+			fprintf(stderr, "buf: %s\n", buf);
 			print_bytes(buf, total_recvd);
 			char method[16], hostname[64], port[8], path[128];
 			parse_request(buf, method, hostname, port, path);
@@ -218,6 +216,7 @@ void handle_client(struct request_info* info){
 			sprintf(req+strlen(req), "Proxy-Connection: close\r\n");
 			sprintf(req+strlen(req), "\r\n");
 			req[strlen(req)] = '\0';
+			fprintf(stderr, "req: %s\n", req);
 			memcpy(info->buf, req, strlen(req));
 			info->bytes_to_write = strlen(req);
 			print_bytes(req, strlen(req));
@@ -298,10 +297,12 @@ void handle_client(struct request_info* info){
 		case SEND_REQUEST:
 			fprintf(stderr, "sending request!\n");
 			memset(buf, 0, sizeof(buf));
-			memcpy(buf, info->buf, info->total_read_c);
+			memcpy(buf, info->buf, sizeof(buf));
+			buf[info->bytes_to_write] = '\0';
+			fprintf(stderr, "request to send: %s\n", buf);
 			bytes_written = -1;
 			total_written = info->total_written_s;
-			while(1) {
+			while(total_written < info->bytes_to_write) {
 				bytes_written = send(info->ssfd, buf+total_written, info->bytes_to_write, 0);
 				if (bytes_written < 0) {
 					fprintf(stderr, "error occured with send!\n");
@@ -317,26 +318,22 @@ void handle_client(struct request_info* info){
 						return;
 					}
 				}
-				info->bytes_to_write -= bytes_written;
 				total_written += bytes_written;
-				if (info->bytes_to_write == 0){
-					fprintf(stderr, "done sending!\n");
-					memset(info->buf, 0, sizeof(info->buf));
-					FD_CLR(info->ssfd, &writefds);
-					FD_SET(info->ssfd, &readfds);
-					info->state = READ_RESPONSE;
-					buf[total_written] = '\0';
-					fprintf(stderr, "Request sent: %s\n", buf);
-					break;
-				}
 			}
+			fprintf(stderr, "done sending!\n");
+			memset(info->buf, 0, sizeof(info->buf));
+			FD_CLR(info->ssfd, &writefds);
+			FD_SET(info->ssfd, &readfds);
+			info->state = READ_RESPONSE;
+			buf[total_written] = '\0';
+			fprintf(stderr, "Request sent: %s\n", buf);
 			break;
 		case READ_RESPONSE:
 			fprintf(stderr, "reading response!\n");
 			memset(buf, 0, sizeof(buf));
-			memcpy(buf, info->buf, info->total_read_s);
+			memcpy(buf, info->buf, sizeof(buf));
 			total_recvd = info->total_read_s;
-			while(!complete_request_received(buf)){
+			while(1){
 				bytes_recvd = recv(info->ssfd, buf+total_recvd, 16384, 0);
 				fprintf(stderr, "received %d bytes\n", bytes_recvd);
 				if (bytes_recvd < 0) {
@@ -349,11 +346,11 @@ void handle_client(struct request_info* info){
 						close(info->csfd);
 						close(info->ssfd);
 						FD_CLR(info->csfd, &readfds);
-						free(info);
 						return;
 					}	
 				} else if (bytes_recvd == 0) {
 					fprintf(stderr, "done reading! Read %d bytes\n", total_recvd);
+					info->total_read_s = total_recvd;
 					FD_SET(info->csfd, &writefds);
 					FD_CLR(info->ssfd, &readfds);
 					close(info->ssfd);
@@ -363,14 +360,41 @@ void handle_client(struct request_info* info){
 					info->state = SEND_RESPONSE;
 					return;
 				}
-
 				total_recvd += bytes_recvd;
+				info->total_read_s = total_recvd;
+				memcpy(info->buf, buf, total_recvd); 
+				print_bytes(buf, total_recvd);
 			}
 			break;
 		case SEND_RESPONSE:
 			fprintf(stderr, "Sending response!\n");
+			memset(buf, 0, sizeof(buf));
+			memcpy(buf, info->buf, info->total_read_s);
+			print_bytes(buf, info->total_read_s);
+			bytes_written = -1;
+			total_written = info->total_written_c;
+			while(total_written < info->total_read_s) {
+				bytes_written = send(info->csfd, buf+total_written, info->total_read_s - total_written, 0);
+				fprintf(stderr, "wrote: %d\n", bytes_written);
+				if (bytes_written < 0) {
+					if (errno == EAGAIN || errno == EWOULDBLOCK){
+						return;
+					} else {
+						perror("send to client");
+						close(info->csfd);
+						FD_CLR(info->csfd, &writefds);
+						free(info);
+						exit(EXIT_FAILURE);
+					}
+				}
+				total_written += bytes_written;
+				info->total_written_c = total_written;
+			}
+			close(info->csfd);
 			FD_CLR(info->csfd, &writefds);
 			break;
+		default:
+			fprintf(stderr, "Unrecognized state\n");
 	}
 }
 
